@@ -19,7 +19,17 @@ public_users.get('/',function (req, res) {
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn',function (req, res) {
   //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+  new Promise((resolve, reject) => {
+  resolve(JSON.stringify(books))
+  })
+  .then((data) => {
+    return res.status(200).json({ data })
+  })
+  .catch((error) => {
+    return res.status(400).json({ message: error })
+  })
+
+  //return res.status(300).json({message: "Yet to be implemented"});
  });
   
 // Get book details based on author

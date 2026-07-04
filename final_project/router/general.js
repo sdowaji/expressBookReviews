@@ -22,14 +22,29 @@ public_users.get('/',function (req, res) {
   .catch((error) => {
     return res.status(400).json({ message: error })
   })
-  
+
   //return res.status(300).json({message: "Yet to be implemented"});
 });
 
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn',function (req, res) {
   //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+  new Promise((resolve, reject) => {
+    const isbn = req.params.isbn
+    const book = books[isbn]
+    if (!book) {
+      reject('Book not found')
+    } else {
+      resolve(book)
+    }
+  })
+    .then((data) => {
+      res.status(200).json(data)
+    })
+    .catch((error) => {
+      res.status(404).json({ message: error })
+    })
+  //return res.status(300).json({message: "Yet to be implemented"});
  });
   
 // Get book details based on author

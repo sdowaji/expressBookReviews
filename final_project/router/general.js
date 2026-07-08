@@ -37,6 +37,17 @@ public_users.get('/',function (req, res) {
   //return res.status(300).json({message: "Yet to be implemented"});
 });
 
+public_users.get('/', async function (req, res) {
+  try {
+    const data = await new Promise((resolve, reject) => {
+      resolve(JSON.stringify(books))
+    })
+    return res.status(200).json({ data })
+  } catch (error) {
+    return res.status(400).json({ message: error })
+  }
+})
+
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn',function (req, res) {
   //Write your code here

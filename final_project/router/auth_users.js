@@ -20,22 +20,16 @@ const authenticatedUser = (username,password)=>{ //returns boolean
 //only registered users can login
 regd_users.post("/login", (req,res) => {
   //Write your code here
-  let username = req.body.username;
-  let password = req.body.password;
+  const { username, password } = req.body
 
-  if(username && password){
-    if(authenticatedUser(username,password)){
-      //create a JWT token
-      let token = jwt.sign({username:username}, SECRET_KEYSECRET_KEY, { expiresIn: '1h' });
-      req.session.authorization = {
-        token, username
-      }
-      return res.status(200).json({message: "User logged in successfully", token: token});
-    }
-    else{
-      return res.status(400).json({message: "Username or password is incorrect"});
-    }
-  }  
+  if (!isValid(username) || !authenticatedUser(username, password)) {
+    return res.status(401).json({ message: 'Invalid username or password' })
+  }
+
+  const token = jwt.sign({ username }, SECRET_KEY, { expiresIn: '1h' })
+  users.find((u) => u.username === username).token = token
+  console.log(users)
+  return res.status(200).json({message: "User logged in successfully", token })
   //return res.status(300).json({message: "Yet to be implemented"});
 });
 

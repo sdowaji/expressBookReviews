@@ -36,7 +36,37 @@ regd_users.post("/login", (req,res) => {
 // Add a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
   //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+  const isbn = req.params.isbn
+  const review = req.body.review
+  const token = req.header('Authorization').replace('Bearer ', '')
+
+  try {
+    const decoded = jwt.verify(token, SECRET_KEY)
+    const user = users.find((user) => user.username === decoded.username)
+
+    if (!books[isbn]) {
+      return res.status(404).json({ message: 'Book not found' })
+    }
+
+    if (!books[isbn].reviews) {
+      books[isbn].reviews = []
+    }
+
+    const reviewsBooks = books[isbn].reviews
+    const reviewUser = Object.keys(reviewsBooks).find(
+      (r) => r.username === user
+    )
+
+    if (reviewUser) {
+      return res.status(400).json({ message: 'Review already exists' })
+    } else {
+      books[isbn].reviews[user] = review
+      return res.status(200).json({ message: 'Review added successfully' })
+    }
+  } catch (error) {
+    res.status(400).send('Invalid token')
+  }
+  //return res.status(300).json({message: "Yet to be implemented"});
 });
 
 module.exports.authenticated = regd_users;
